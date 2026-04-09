@@ -2,6 +2,9 @@
 
 Asteroids clone running at a nearly locked 30FPS on the nRF54LM20-DK with a 3.5" 480x320 TFT display (UEED035HV-RX40-L001, ST7365 controller).
 
+![Platform](https://img.shields.io/badge/platform-nRF54lm20-purple)
+![RTOS](https://img.shields.io/badge/RTOS-Zephyr-orange)
+
 - **CPU app** (`displaytest/`) runs game logic + rendering on the ARM Cortex-M33
 - **FLPR app** (`displaydriver/`) runs a dedicated display driver on the RISC-V FLPR core
 - 16-bit parallel (8080 MCU) interface, 30fps target, landscape orientation
