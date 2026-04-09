@@ -1,0 +1,64 @@
+/*
+ * CPU App overlay for nRF54LM20-DK Asteroids
+ *
+ * Based on the nordic-flpr snippet for nRF54LM20A, with additions
+ * for the shared framebuffer region.
+ *
+ * Memory map:
+ *   0x20000000 - 0x2003FFFF : CPUAPP SRAM (256KB) - kernel + game
+ *   0x20040000 - 0x20065FFF : Shared framebuffer (155KB)
+ *   0x20067C00 - 0x2007FBFF : FLPR SRAM (96KB) - display driver
+ *
+ *   0x001E5000 - 0x001FCFFF : FLPR code partition in RRAM (96KB)
+ */
+
+/ {
+	soc {
+		reserved-memory {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			/* FLPR firmware stored in RRAM (flash) - VPR launcher copies from here */
+			cpuflpr_code_partition: image@1e5000 {
+				reg = <0x1e5000 DT_SIZE_K(96)>;
+			};
+
+			/* Shared framebuffer between CPU and FLPR */
+			sram_framebuffer: memory@20040000 {
+				reg = <0x20040000 0x26000>;
+			};
+		};
+
+		/* FLPR execution SRAM - VPR launcher loads code here */
+		cpuflpr_sram_code_data: memory@20067c00 {
+			compatible = "mmio-sram";
+			reg = <0x20067c00 DT_SIZE_K(96)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x20067c00 DT_SIZE_K(96)>;
+		};
+	};
+};
+
+/* Reduce CPUAPP SRAM: 256KB for kernel+game, rest is framebuffer + FLPR */
+&cpuapp_sram {
+	reg = <0x20000000 0x40000>;
+	ranges = <0x0 0x20000000 0x40000>;
+};
+
+/* Reserve UART30 for FLPR console */
+&uart30 {
+	status = "reserved";
+};
+
+/* Enable FLPR core with memory configuration for VPR launcher */
+&cpuflpr_vpr {
+	status = "okay";
+	execution-memory = <&cpuflpr_sram_code_data>;
+	source-memory = <&cpuflpr_code_partition>;
+};
+
+/* Enable VEVIF TX for CPU->FLPR signaling (needed for VPR launcher) */
+&cpuapp_vevif_tx {
+	status = "okay";
+};
