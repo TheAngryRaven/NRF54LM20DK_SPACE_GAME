@@ -1,6 +1,6 @@
 # Asteroids - nRF54LM20-DK
 
-Asteroids clone running on the nRF54LM20-DK with a 3.5" 480x320 TFT display (UEED035HV-RX40-L001, ST7365 controller).
+Asteroids clone running at a nearly locked 30FPS on the nRF54LM20-DK with a 3.5" 480x320 TFT display (UEED035HV-RX40-L001, ST7365 controller).
 
 - **CPU app** (`displaytest/`) runs game logic + rendering on the ARM Cortex-M33
 - **FLPR app** (`displaydriver/`) runs a dedicated display driver on the RISC-V FLPR core
